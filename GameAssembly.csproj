@@ -91,12 +91,11 @@
      <Compile Include="Assets\Scripts\Games\Scramble\ScramblePlayerState.cs" />
      <Compile Include="Assets\Scripts\Games\Scramble\ScramblePuzzleData.cs" />
      <Compile Include="Assets\Scripts\Games\Scramble\ScrambleWordScorer.cs" />
+     <Compile Include="Assets\Scripts\Games\WordRacer\Letter.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\TrackController.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\Word.cs" />
-     <Compile Include="Assets\Scripts\Games\WordRacer\WordBuilder.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\WordRacer.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerGameEvents.cs" />
-     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerLevel.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerPanel.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerPuzzleData.cs" />
      <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerWordScorer.cs" />

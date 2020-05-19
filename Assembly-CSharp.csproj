@@ -97,12 +97,11 @@
     <Compile Include="Assets\Scripts\Games\Crossing\CrossingEvents.cs" />
     <Compile Include="Assets\Scripts\Games\Crossing\CrossingGrid.cs" />
     <Compile Include="Assets\Scripts\Games\Crossing\CrossingTile.cs" />
+    <Compile Include="Assets\Scripts\Games\WordRacer\Letter.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\TrackController.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\Word.cs" />
-    <Compile Include="Assets\Scripts\Games\WordRacer\WordBuilder.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacer.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerGameEvents.cs" />
-    <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerLevel.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerPanel.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerPuzzleData.cs" />
     <Compile Include="Assets\Scripts\Games\WordRacer\WordRacerWordScorer.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="Assets\Scripts\Tiles\TileChar.cs" />
     <Compile Include="Assets\Scripts\Tiles\TilePanelTest.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
-    <Compile Include="GameLogic\WordBuilder.cs" />
     <None Include="Assets\StreamingAssets\wordsByFrequency.txt" />
     <None Include="Assets\StreamingAssets\words\10k.txt" />
     <None Include="Assets\StreamingAssets\hangman.txt" />

@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 
 public class Word
@@ -28,6 +31,30 @@ public class Word
         this.Collection.Add(word);
     }
 
+    public int Length
+    {
+        get
+        {
+            return this.Collection.Sum(x => x.Value.Length);
+        }
+    }
+
+    public int Count
+    {
+        get
+        {
+            return this.Collection.Count;
+        }
+    }
+
+    public char LastLetter
+    {
+        get
+        {
+            return this.Value.ToCharArray()[this.Value.Length - 1];
+        }
+    }
+
     public int GetTrackUsed()
     {
         var trackUsed = 0;
@@ -37,5 +64,20 @@ public class Word
         }
 
         return trackUsed - this.Collection.Count + 1;
+    }
+    public override string ToString()
+    {
+        if (this.Collection.Count() > 0)
+        {
+            var sb = new List<string>();
+            foreach (var word in this.Collection)
+            {
+                sb.Add(word.Value);
+            }
+
+            return string.Join(", ", from item in sb select item);
+        }
+
+        return this.Value.ToString();
     }
 }

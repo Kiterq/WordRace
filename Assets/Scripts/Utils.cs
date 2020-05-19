@@ -78,6 +78,6 @@ public static class Utils {
 	}
 	public static void MyLog(string message)
 	{
-		Debug.Log(message + "\n" + DateTime.Now.ToString());
+		////Debug.Log(message + "\n" + DateTime.Now.ToString());
 	}
 }

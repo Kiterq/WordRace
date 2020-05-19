@@ -1,17 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEngine;
+//using Random = UnityEngine.Random;
 
 public class TrackController
 {
     public Word Word { get; private set; }
 
-    public char Character { get; set; }
+    public Letter Letter { get; set; }
 
-    public string PossibleWord { get; private set; }
+    ////public char Letter { get; set; }
+
+    public List<char> LetterDeck { get; private set; }
+
+    ////public string PossibleWord { get; private set; }
 
     public int TrackExposedLength { get; private set; }
 
@@ -32,9 +37,7 @@ public class TrackController
                 return this.Track.Substring(0, this.TrackExposedLength);
             }
 
-            return this.Track.Substring(this.TrackIndex - this.PossibleWord.Length, this.TrackExposedLength);
-
-            return this.Track.Substring(this.TrackIndex - 1, this.TrackExposedLength);
+            return this.Track.Substring(this.Word.Length - this.Word.Count, this.TrackExposedLength);
         }
     }
 
@@ -77,22 +80,40 @@ public class TrackController
     {
         Utils.MyLog(string.Format("Method '{0}' called", MethodBase.GetCurrentMethod()));
 
+        this.LetterDeck = new List<char>();
+
+        this.Letter = Letter.Create();
+
         this.Word = new Word();
 
         this.TrackSpacer = trackSpacer;
         this.Dictionary = dictionary;
         this.TrackLength = trackLength;
-        this.BuildTrack(trackLength);
+        this.BuildTrack();
         this.TrackExposedLength = trackExposedLength;
         this.AcceptedTrack = this.ActiveTrack;
-        this.IsStartOfGo = true;
     }
 
-    private void BuildTrack(int trackLength)
+    public void SetPlayersLetterDeck(List<char> c)
     {
+        this.LetterDeck = c;
+    }
+
+    public void BuildTrack()
+    {
+        this.TrackIndex = 0;
+
+        if (this.Letter != null)
+        {
+            this.Letter.Collection.Clear();
+        }
+        
+        this.IsStartOfGo = true;
+        this.Word.Collection.Clear();
+
         var sb = new StringBuilder();
 
-        for (int i = 0; i < trackLength; i++)
+        for (int i = 0; i < this.TrackLength; i++)
         {
             sb.Append(this.TrackSpacer);
         }
@@ -110,22 +131,24 @@ public class TrackController
         {
             this.AcceptedTrack = this.ActiveTrack;
 
-            var word = Word.Create(PossibleWord);
+            // Only create word if is a word?.. .
+            var word = Word.Create(this.Letter.ToString());
 
             Word.Add(word);
 
             this.IsStartOfGo = false;
 
             //Start of the word.. 
-            this.PossibleWord = this.PossibleWord.Substring(this.PossibleWord.Length - 1);
+            this.Letter = Letter.Create();
+            this.Letter.Add(word.LastLetter); 
         }
     }
 
-    public string AddLetter(char character)
+    public string AddLetter(char letter)
     {
         Utils.MyLog(string.Format("Method '{0}' called", MethodBase.GetCurrentMethod()));
 
-        this.Character = character;
+        ////this.Letter.Value = letter;
 
         if (this.IsSpaceAvailable)
         {
@@ -139,22 +162,21 @@ public class TrackController
 
             if (this.IsStartOfGo)
             {
-                PossibleWord = string.Empty;
                 this.IsStartOfGo = false;
 
                 if (firstUnderscore == 0)
                 {
                     //First letter to add to track. 
-                    newWordStringBuilder.Append(character);
-                    PossibleWord = newWordStringBuilder.ToString();
+                    newWordStringBuilder.Append(letter);
+                    this.Letter.Add(letter);
                 }
                 else
                 {
                     var lastLetterOfPreviousWord = sb[firstUnderscore - 1];
                     newWordStringBuilder.Append(lastLetterOfPreviousWord);
 
-                    newWordStringBuilder.Append(character);
-                    PossibleWord = newWordStringBuilder.ToString();
+                    newWordStringBuilder.Append(letter);
+                    this.Letter.Add(letter);
                 }
             }
             else
@@ -162,14 +184,16 @@ public class TrackController
                 var lastLetterOfPreviousWord = sb[firstUnderscore - 1];
                 newWordStringBuilder.Append(lastLetterOfPreviousWord);
 
-                newWordStringBuilder.Append(character);
+                newWordStringBuilder.Append(letter);
 
-                PossibleWord = PossibleWord + character;
+                this.Letter.Add(letter);
             }
+
+            //this.LetterDeck.Remove(letter);
 
             this.TrackIndex++;
 
-            if (this.Dictionary.IsAWord(PossibleWord))
+            if (this.Dictionary.IsAWord(this.Letter.ToString()))
             {
                 // Raise event to offer submit?
                 this.AllowSave = true;
@@ -181,12 +205,78 @@ public class TrackController
                 // Keep going...
             }
 
-            ResetActiveTrack(character, sb, firstUnderscore);
+            ResetActiveTrack(letter, sb, firstUnderscore);
 
             this.Track = sb.ToString();
         }
 
         return this.Track;
+    }
+
+    public List<char> GetRemainingDeckLetters(int length)
+    {
+        Utils.MyLog(string.Format("Method '{0}' called", MethodBase.GetCurrentMethod()));
+
+        var result = new List<char>();
+
+        var randomString = getRandomString(length);
+
+        foreach (var r in randomString)
+        {
+            result.Add(r);
+        }
+
+        return result;
+    }
+
+    public string getRandomString(int length)
+    {
+        // creating a StringBuilder object()
+        StringBuilder str_build = new StringBuilder();
+        Random random = new Random();
+
+        char letter;
+
+        for (int i = 0; i < length; i++)
+        {
+            double flt = random.NextDouble();
+            int shift = Convert.ToInt32(Math.Floor(25 * flt));
+            letter = Convert.ToChar(shift + 65);
+            str_build.Append(letter.ToString().ToLower());
+        }
+        return str_build.ToString();
+    }
+
+    public string GetPlayersLetterDeck(int deckTileNumber)
+    {
+        var newLetterDeck = new List<char>();
+
+        if (this.AllowSave)
+        {
+            // TODO Keep unused letters
+            var remainingLetterCount = deckTileNumber - this.LetterDeck.Count;
+            
+            foreach (var remainingLetter in this.LetterDeck)
+            {
+                newLetterDeck.Add(remainingLetter);
+            }
+
+            var playersLetterDeck = GetRemainingDeckLetters(remainingLetterCount);
+            foreach (var newLetter in playersLetterDeck)
+            {
+                newLetterDeck.Add(newLetter);
+            }
+
+            ;
+
+            this.SetPlayersLetterDeck(newLetterDeck);
+        }
+        else
+        {
+            this.BuildTrack();
+        }
+
+        return newLetterDeck.ToString();
     }
 
     private void ResetActiveTrack(char character, StringBuilder sb, int firstUnderscore)
